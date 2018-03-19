@@ -83,14 +83,17 @@ func main() {
 
 Here we see some different ways to initialize variables of different types
 ```go
+// Note that unused variables will throw an error in Go
 var  i, j, k int;
 var  c, ch byte;
 var  f, salary float32;
-inferred_number := 42; // note the :=
+var number int = 5
+var name string = "Ryan"
+inferred_number := 7 // note the :=
 // := refers to declaration and assignment, where type can be inferred
 // The following two lines of code are equivalent
 var d int = 42
-d := 42 // however just d=42 would throw an error
+inferred_d := 42 // however just inferred_d=42 would throw an error
 
 ```
 Additionally you can also get the type of a variable with %T format specifier
@@ -107,3 +110,53 @@ func main() {
 	fmt.Printf("x is of type %T\n", x)
 }
 ```
+
+#### Constants
+
+```
+package main
+
+import "fmt"
+
+func main() {
+	const LENGTH int = 10
+	const WIDTH int = 5   
+	var area int
+
+	area = LENGTH * WIDTH
+	fmt.Printf("value of area : %d", area)   
+}
+```
+
+### Operators
+#### Arithmetic Operators
+|Operator|Description|
+|--------|-----------|
+|+|Adds two operands|
+|-|Subtracts second operand from first operand|
+|\*|Multiplies operands together|
+|/|Divides first operand by second operand|
+|%|Modulus operator - gives remainder of division|
+|++|Increments value by 1|
+|--|Decrements value by 1|
+
+#### Relational Operators
+
+|Operator|
+|--------|
+|==|
+|<=|
+|>=|
+|<|
+|>|
+|!=|
+|--|
+
+#### Logical Operators
+
+|Operator|Description|
+|--------|-----------|
+|&&|AND|
+|\|\||OR|
+|!|NOT|
+
