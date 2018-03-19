@@ -50,17 +50,47 @@ func main() {
 
 | Type  | Description |
 |-------|-------------|
-|Boolean|`true` or `false`|
+|Boolean|True or False values|
 |Numeric|Integers or floating point values|
 |String |Immutable sequences of bytes|
 |Derived|Pointer types, Array types, Struct types, Function types, etc. |
+
+| Integer Types |
+|---------------|
+|uint8|
+|uint16|
+|uint32|
+|uint64|
+|int8|
+|int16|
+|int32|
+|int64|
+
+| Floating-Point Types |
+|----------------------|
+|float32|
+|float64|
+|complex64|
+|complex128|
+
+|Other Numeric Types|
+|-------------------|
+|byte|same as uint8|
+|rune|same as int32|
+|uint|32 or 64bit depending on system|
+|int|32 or 64bit depending on systme|
+|uintptr|special type to consider pointer as a uint for easier arithmetic|
 
 Here we see some different ways to initialize variables of different types
 ```go
 var  i, j, k int;
 var  c, ch byte;
 var  f, salary float32;
-d =  42;
+inferred_number := 42; // note the :=
+// := refers to declaration and assignment, where type can be inferred
+// The following two lines of code are equivalent
+var d int = 42
+d := 42 // however just d=42 would throw an error
 
 ```
 Additionally you can also get the type of a variable with %T format specifier
