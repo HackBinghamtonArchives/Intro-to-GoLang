@@ -48,12 +48,12 @@ func main() {
 ### Types
 
 
-| Type  |
-|-------|
-|Boolean|
-|Numeric|
-|String |
-|Derived|
+| Type  | Description |
+|-------|-------------|
+|Boolean|`true` or `false`|
+|Numeric|Integers or floating point values|
+|String |Immutable sequences of bytes|
+|Derived|Pointer types, Array types, Struct types, Function types, etc. |
 
 Here we see some different ways to initialize variables of different types
 ```go
