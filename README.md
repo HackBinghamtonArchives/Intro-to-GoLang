@@ -46,6 +46,15 @@ func main() {
 
 
 ### Types
+
+
+| Type  |
+|-------|
+|Boolean|
+|Numeric|
+|String |
+|Derived|
+
 Here we see some different ways to initialize variables of different types
 ```go
 var  i, j, k int;
