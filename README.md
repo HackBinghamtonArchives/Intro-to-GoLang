@@ -128,6 +128,41 @@ func main() {
 }
 ```
 
+#### Channels and Go-Routines
+Go has a type called "Channel" which are pipes that connect concurrent
+Go routines (like threads). You can send values into a channel from one routine
+and receive that value from the channel in another routine with the channel
+operator `<-`.
+
+**By default, sends and receives block until the other side is ready. This 
+allows goroutines to synchronize without explicit locks or condition 
+variables.** - Part of why Go is cool!
+
+```go
+package main
+
+import "fmt"
+
+func sum(s []int, c chan int) {
+	sum := 0
+	for _, v := range s {
+		sum += v
+	}
+	c <- sum // send sum to c
+}
+
+func main() {
+	s := []int{7, 2, 8, -9, 4, 0}
+
+	c := make(chan int)
+	go sum(s[:len(s)/2], c) // One routine sum up first half
+	go sum(s[len(s)/2:], c) // Second routine sum up second half
+	x, y := <-c, <-c // receive from c
+
+	fmt.Println(x, y, x+y)
+}
+```
+
 ### Operators
 #### Arithmetic Operators
 |Operator|Description|
@@ -160,3 +195,123 @@ func main() {
 |\|\||OR|
 |!|NOT|
 
+
+#### Others
+
+Find documentation on all operators here:
+[https://www.tutorialspoint.com/go/go_operators.htm](https://www.tutorialspoint.com/go/go_operators.htm)
+
+### Decision Making
+![](https://www.tutorialspoint.com/go/images/decision_making.jpg)
+
+#### If Statement
+```go
+package main
+
+import "fmt"
+
+func main() {
+  /* local variable definition */
+  var a int = 10
+
+    /* check the boolean condition using if statement */
+    if( a < 20 ) {
+        /* if condition is true then print the following */
+        fmt.Printf("a is less than 20\n" )
+    }
+    fmt.Printf("value of a is : %d\n", a)
+}
+```
+#### If...Else Statement
+```go
+package main
+
+import "fmt"
+
+func main() {
+	/* local variable definition */
+	var a int = 100;
+
+	/* check the boolean condition */
+	if( a < 20 ) {
+		/* if condition is true then print the following */
+		fmt.Printf("a is less than 20\n" );
+	} else {
+		/* if condition is false then print the following */
+		fmt.Printf("a is not less than 20\n" );
+	}
+	fmt.Printf("value of a is : %d\n", a);
+}
+```
+#### Nested If Statement
+```go
+package main
+
+import "fmt"
+
+func main() {
+	/* local variable definition */
+	var a int = 100
+		var b int = 200
+
+		/* check the boolean condition */
+		if( a == 100 ) {
+			/* if condition is true then check the following */
+			if( b == 200 )  {
+				/* if condition is true then print the following */
+				fmt.Printf("Value of a is 100 and b is 200\n" );
+			}
+		}
+	fmt.Printf("Exact value of a is : %d\n", a );
+	fmt.Printf("Exact value of b is : %d\n", b );
+}
+```
+#### Switch Statement
+```go
+package main
+
+import "fmt"
+
+func main() {
+	/* local variable definition */
+	var grade string = "B"
+		var marks int = 90
+
+		switch marks {
+			case 90: grade = "A"
+			case 80: grade = "B"
+			case 50,60,70 : grade = "C"
+			default: grade = "D"  
+		}
+	switch {
+		case grade == "A" :
+			fmt.Printf("Excellent!\n" )     
+		case grade == "B", grade == "C" :
+				fmt.Printf("Well done\n" )      
+		case grade == "D" :
+					fmt.Printf("You passed\n" )      
+		case grade == "F":
+						fmt.Printf("Better try again\n" )
+		default:
+							fmt.Printf("Invalid grade\n" );
+	}
+	fmt.Printf("Your grade is  %s\n", grade );      
+}
+```
+#### Select Statement
+
+
+A select statement is like a switch statement but specifically for channels.
+
+
+```go
+select {
+	case communication clause  :
+		statement(s);      
+	case communication clause  :
+		statement(s); 
+		/* you can have any number of case statements */
+	default : /* Optional */
+		statement(s);
+}
+```
