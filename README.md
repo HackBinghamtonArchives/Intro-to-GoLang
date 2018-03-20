@@ -138,23 +138,6 @@ func main() {
 }
 ```
 
-#### Constants
-
-```go
-package main
-
-import "fmt"
-
-func main() {
-	const LENGTH int = 10
-	const WIDTH int = 5
-	var area int
-
-	area = LENGTH * WIDTH
-	fmt.Printf("value of area : %d", area)
-}
-```
-
 ### Operators
 #### Arithmetic Operators
 |Operator|Description|
@@ -290,13 +273,442 @@ func main() {
 }
 ```
 
+### Loops
+Go only has one looping mechanism, the `for` loop. It doesn't
+have while loops, but that's fine because any while loop can be
+represented as a for loop anyways. Note you don't need parentheses
+around the bounds of the for loop like you do in C/C++:
 
+```go
+package main
+
+import "fmt"
+
+func main() {
+	sum := 0
+	for i := 0; i < 10; i++ {
+		sum += i
+	}
+	fmt.Println(sum)
+}
+```
+
+Also, the initial and post statements of the for loop are optional,
+and this is a useful way to replicate a while loop:
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+	sum := 1
+	for sum < 1000 {
+		sum += sum
+	}
+	fmt.Println(sum)
+}
+```
+
+To replicate an infinite loop `while true:`, you can just
+have a for loop with no condition:
+
+```go
+package main
+
+func main() {
+	for {
+	}
+}
+```
+
+### Conditional Statements
+
+![](https://www.tutorialspoint.com/go/images/decision_making.jpg)
+
+If statements are useful to control the flow of your program. Like the
+for loops, you don't need any parentheses around the condition of the if
+statement. Here is an example of that for a sqrt() function that handles
+both real and complex numbers:
+
+```go
+package main
+
+import (
+	"fmt"
+	"math"
+)
+
+func sqrt(x float64) string {
+	if x < 0 {
+		return sqrt(-x) + "i"
+	}
+	else
+	{
+		return fmt.Sprint(math.Sqrt(x))
+	}
+}
+
+func main() {
+	fmt.Println(sqrt(2), sqrt(-4))
+}
+
+```
+
+#### Exercises
+How would I write a program that prints out the 
+first 10 perfect squares (1 2 4 9 16 25 ... 100)?
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+	for i := ???; i < ???; ??? {
+		fmt.Println(???)
+	}
+}
+
+```
+
+How would I print out only the even numbers between 1 and 10
+using an if statement? (2 4 6 8 10)
+(Hint: Modulo Operator)
+```go
+package main
+
+import "fmt"
+
+func main() {
+	for i := ???; i < ???; ??? {
+		if <i is even>??? {
+			fmt.Println(i)
+		}
+	}
+}
+```
+
+How would you print the even numbers between 1 and 10
+with only a for loop and no if statement? (2 4 6 8 10)
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+	for i := ???; i < ???; ??? {
+		fmt.Println(???)
+	}
+}
+```
+
+### Defer Statement
+A defer statement defers the execution of a function until the 
+surrounding function returns. DISCLAIMER: The value in the statement 
+is captured where the statement occurs.
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+	defer fmt.Println("world") // happens second because of defer statement
+
+	fmt.Println("hello") // happens first
+}
+```
+
+This could be useful in situations where you want to print values
+before and after certain cases since the value is captured
+at the time of the defer statement
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+	x := 5
+	defer fmt.Println("Before:", x)
+	x = 10
+	defer fmt.Println("After:", x)
+	x = 15
+	fmt.Println("Here are the values of x throughout the program:")
+}
+```
+
+### Structs (Not Classes)
+Like C, Go has Structs, but not Classes.
+A Struct is just a collection of fields/variables.
+
+```go
+package main
+
+import "fmt"
+
+type Coordinate struct {
+	X int
+	Y int
+}
+
+func main() {
+	point := Coordinate{1, 2} // Initializes X -> 1 and Y -> 2
+	fmt.Println("X:", point.X)
+	fmt.Println("Y:", point.Y)
+}
+```
+
+### Arrays
+To declare an array of type T in Go, you just write `[size]T` where `size`
+is how big you want the array to be.
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+	var a [2]string
+	a[0] = "Hello"
+	a[1] = "World"
+	fmt.Println(a[0], a[1])
+	fmt.Println(a)
+
+	primes := [6]int{2, 3, 5, 7, 11, 13}
+	fmt.Println(primes)
+}
+```
+
+### Slices
+A slice does not store any data, it just describes a section of an underlying 
+array. Changing the elements of a slice modifies the corresponding elements 
+of its underlying array. 
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+	primes := [6]int{2, 3, 5, 7, 11, 13}
+
+	var s []int = primes[1:4] // [start, end)
+	fmt.Println(s) // begin index inclusive, end index exclusive
+}
+```
+
+#### Slice Literals
+If you define everything in an array when you initialize it,
+and don't specify a size - it creates a slice that references
+that array
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+	array := [6]int{2, 3, 5, 7, 11, 13}
+	slice := []int{2, 3, 5, 7, 11, 13}
+	fmt.Printf("%T\n", array)
+	fmt.Printf("%T\n", slice)
+}
+```
+
+### Dynamic Arrays (Still slices)
+Slices can be created with the built-in `make` function: 
+allowing you to create dynamically-sized arrays of a 
+**specified size**.
+
+The `make` function allocates a zeroed-out array and
+returns a slice that refers to that array
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+	a := make([]int, 5) // len = 5
+	printSlice("a", a)
+
+	b := make([]int, 0, 5) // len = 0, cap = 5
+	printSlice("b", b)
+
+	// Capacity == Total allocated size
+	// Length == Total used size
+}
+
+func printSlice(s string, x []int) {
+	fmt.Printf("%s len=%d cap=%d %v\n",
+		s, len(x), cap(x), x)
+}
+```
+
+In order for the dynamic array to be useful, we need some way
+to add elements to it whenever we want. That's where the `append`
+function comes in. `append` adds an item to the end of the 
+slice, just like in Python:
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+	var s []int // SAME AS   s := make([]int, 0)
+	printSlice(s)
+
+	// append works on nil slices.
+	s = append(s, 0) // can append values to increase size
+	printSlice(s)
+
+	// We can add more than one element at a time.
+	s = append(s, 1, 2, 3)
+	printSlice(s)
+}
+
+func printSlice(s []int) {
+	fmt.Printf("len=%d cap=%d %v\n", len(s), cap(s), s)
+}
+```
+
+### For Loops with Slices
+Go has a built-in `range` function, similar to the `range` function
+in Python, but actually closer to the `enumerate` function in Python
+because it returns both the index and the element!
+
+This `range` function makes it easy to iterate over things like Slices
+much more elegantly:
+
+```go
+package main
+
+import "fmt"
+
+var pow = []int{1, 2, 4, 8, 16, 32, 64, 128}
+
+func main() {
+	for i, v := range pow {
+		fmt.Printf("2**%d = %d\n", i, v)
+	}
+}
+```
+
+Optionally, you can drop the index or drop the value 
+depending on your needs:
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+	// Omitting value: just don't include it
+	pow := make([]int, 10)
+	for i := range pow {
+		pow[i] = 1 << uint(i) // == 2**i
+	}
+	// Omitting index: Use '_' which compiler accepts when not used
+	for _, value := range pow {
+		fmt.Printf("%d\n", value)
+	}
+}
+```
+
+### Maps
+Very similar to Dictionaries in Python / Maps in C such that
+they contain (key, value) pairs
+
+```go
+package main
+
+import "fmt"
+
+type Coordinate struct {
+	Lat, Long float64
+}
+
+var m = map[string]Coordinate{
+	"Bell Labs": Coordinate{
+		40.68433, -74.39967,
+	},
+	"Google": Coordinate{
+		37.42202, -122.08408,
+	},
+}
+
+func main() {
+	fmt.Println(m)
+}
+```
+
+Dynamically-sized Maps can also be created with the `make` keyword
+
+They also have a `delete` method to remove (key,value) pairs, as well
+as the ability to check whether or not elements exist in a map
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+	m := make(map[string]int) // create empty map
+
+	m["Answer"] = 42 // add (key, value) pair ("Answer", 42) to map
+	fmt.Println("The value:", m["Answer"])
+
+	v, ok := m["Answer"]
+	fmt.Println("The value:", v, "Present?", ok)
+
+	delete(m, "Answer")
+
+	v, ok = m["Answer"]
+	fmt.Println("The value:", v, "Present?", ok)
+}
+
+```
+
+### Functions as Objects
+Functions can be passed around the same way that values
+and variables can. For example, you can have a function that
+takes in another function as a parameter:
+
+```go
+package main
+
+import (
+	"fmt"
+	"math"
+)
+
+func compute(fn func(float64, float64) float64) float64 {
+	return fn(3, 4)
+}
+
+func main() {
+	hypot := func(x, y float64) float64 {
+		return math.Sqrt(x*x + y*y)
+	}
+	fmt.Println(hypot(5, 12))
+
+	fmt.Println(compute(hypot))
+	fmt.Println(compute(math.Pow))
+}
+```
 
 ### Channels and Go-Routines
 Go has a type called "Channel" which are pipes that connect concurrent
 Go routines (like threads). You can send values into a channel from one routine
 and receive that value from the channel in another routine with the channel
-operator `<-`.
+operator `<-`. 
+
+Channels have to be created with the `make` keyword, which essentially
+just allocates the memory for an object
 
 **By default, sends and receives block until the other side is ready. This 
 allows goroutines to synchronize without explicit locks or condition 
@@ -329,73 +741,9 @@ func main() {
 }
 ```
 
+[comment]: <> (
+### Other Decision Making Structures
 
-
-### Decision Making
-![](https://www.tutorialspoint.com/go/images/decision_making.jpg)
-
-#### If Statement
-```go
-package main
-
-import "fmt"
-
-func main() {
-  /* local variable definition */
-  var a int = 10
-
-    /* check the boolean condition using if statement */
-    if( a < 20 ) {
-        /* if condition is true then print the following */
-        fmt.Printf("a is less than 20\n" )
-    }
-    fmt.Printf("value of a is : %d\n", a)
-}
-```
-#### If...Else Statement
-```go
-package main
-
-import "fmt"
-
-func main() {
-	/* local variable definition */
-	var a int = 100;
-
-	/* check the boolean condition */
-	if( a < 20 ) {
-		/* if condition is true then print the following */
-		fmt.Printf("a is less than 20\n" );
-	} else {
-		/* if condition is false then print the following */
-		fmt.Printf("a is not less than 20\n" );
-	}
-	fmt.Printf("value of a is : %d\n", a);
-}
-```
-#### Nested If Statement
-```go
-package main
-
-import "fmt"
-
-func main() {
-	/* local variable definition */
-	var a int = 100
-		var b int = 200
-
-		/* check the boolean condition */
-		if( a == 100 ) {
-			/* if condition is true then check the following */
-			if( b == 200 )  {
-				/* if condition is true then print the following */
-				fmt.Printf("Value of a is 100 and b is 200\n" );
-			}
-		}
-	fmt.Printf("Exact value of a is : %d\n", a );
-	fmt.Printf("Exact value of b is : %d\n", b );
-}
-```
 #### Switch Statement
 ```go
 package main
@@ -436,4 +784,4 @@ A select statement is like a switch statement but specifically for channels.
 
 ```go
 
-```
+```)
