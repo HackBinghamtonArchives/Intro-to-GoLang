@@ -2,7 +2,10 @@
 Repository for HackBU Demo on Go
 
 Most of the code in this demo is adopted from 
-[https://www.tutorialspoint.com/go/go_overview.htm](https://www.tutorialspoint.com/go/go_overview.htm).
+[https://www.tutorialspoint.com/go/go_overview.htm](https://www.tutorialspoint.com/go/go_overview.htm) 
+and 
+[https://tour.golang.org](https://tour.golang.org). These are great resources
+to start learning Go on your own.
 
 ## Motivation
 Go programming implementations use a traditional compile and link model to 
@@ -44,7 +47,6 @@ func main() {
 }
 ```
 
-
 ### Types
 
 
@@ -83,17 +85,17 @@ func main() {
 
 Here we see some different ways to initialize variables of different types
 ```go
-// Note that unused variables will throw an error in Go
-var  i, j, k int;
-var  c, ch byte;
-var  f, salary float32;
-var number int = 5
-var name string = "Ryan"
-inferred_number := 7 // note the :=
-// := refers to declaration and assignment, where type can be inferred
-// The following two lines of code are equivalent
-var d int = 42
-inferred_d := 42 // however just inferred_d=42 would throw an error
+package main
+
+import "fmt"
+
+func main() {
+	var i, j int = 1, 2 // explicit type declaration
+	k := 3 // implicit type declaration
+	c, python, java := true, false, "no!" // mixed-type implicit declaration
+
+	fmt.Println(i, j, k, c, python, java)
+}
 
 ```
 Additionally you can also get the type of a variable with %T format specifier
@@ -111,55 +113,45 @@ func main() {
 }
 ```
 
-#### Constants
+Here is an example of various types in Go being used, as well as demonstrating how
+you can use import() and var() to import various things and declare many variables
+without having to retype too much:
 
-```
+```go
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"math/cmplx"
+)
+
+var (
+	ToBe   bool       = false
+	MaxInt uint64     = 1<<64 - 1
+	z      complex128 = cmplx.Sqrt(-5 + 12i)
+)
 
 func main() {
-	const LENGTH int = 10
-	const WIDTH int = 5   
-	var area int
-
-	area = LENGTH * WIDTH
-	fmt.Printf("value of area : %d", area)   
+	fmt.Printf("Type: %T Value: %v\n", ToBe, ToBe)
+	fmt.Printf("Type: %T Value: %v\n", MaxInt, MaxInt)
+	fmt.Printf("Type: %T Value: %v\n", z, z)
 }
 ```
 
-#### Channels and Go-Routines
-Go has a type called "Channel" which are pipes that connect concurrent
-Go routines (like threads). You can send values into a channel from one routine
-and receive that value from the channel in another routine with the channel
-operator `<-`.
-
-**By default, sends and receives block until the other side is ready. This 
-allows goroutines to synchronize without explicit locks or condition 
-variables.** - Part of why Go is cool!
+#### Constants
 
 ```go
 package main
 
 import "fmt"
 
-func sum(s []int, c chan int) {
-	sum := 0
-	for _, v := range s {
-		sum += v
-	}
-	c <- sum // send sum to c
-}
-
 func main() {
-	s := []int{7, 2, 8, -9, 4, 0}
+	const LENGTH int = 10
+	const WIDTH int = 5
+	var area int
 
-	c := make(chan int)
-	go sum(s[:len(s)/2], c) // One routine sum up first half
-	go sum(s[len(s)/2:], c) // Second routine sum up second half
-	x, y := <-c, <-c // receive from c
-
-	fmt.Println(x, y, x+y)
+	area = LENGTH * WIDTH
+	fmt.Printf("value of area : %d", area)
 }
 ```
 
@@ -200,6 +192,144 @@ func main() {
 
 Find documentation on all operators here:
 [https://www.tutorialspoint.com/go/go_operators.htm](https://www.tutorialspoint.com/go/go_operators.htm)
+
+
+### Functions
+
+Functions are similar to most other languages, one noticable difference
+being that the return type is at the end of the function header:
+
+```go
+package main
+
+import "fmt"
+
+func add(x int, y int) int {
+	return x + y
+}
+
+func main() {
+	fmt.Println(add(42, 13))
+}
+```
+
+However, one neat trick is that if all parameters are of the same type,
+you can just put the type at the end of the parameters as seen below:
+
+```go
+package main
+
+import "fmt"
+
+func add(x, y int) int {
+	return x + y
+}
+
+func main() {
+	fmt.Println(add(42, 13))
+}
+```
+
+You can also return multiple things in Go which you can't
+do in every language (without some workaround)
+
+```go
+package main
+
+import "fmt"
+
+func swap(x, y string) (string, string) {
+	return y, x
+}
+
+func main() {
+	a, b := swap("hello", "world")
+	fmt.Println(a, b)
+}
+```
+
+### Misc Variable Stuff
+
+#### Default Values
+Variables that are declared with no initial value are
+given a value of "zero" - depending on what that means
+for the given type. Here's some example default type values
+```go
+package main
+
+import "fmt"
+
+func main() {
+	var (
+		i int
+		f float64
+		b bool
+		s string
+	)
+	fmt.Printf("%v %v %v %q\n", i, f, b, s)
+}
+
+```
+
+You can also cast variables to other types with type(var):
+
+```go
+package main
+
+import (
+	"fmt"
+	"math"
+)
+
+func main() {
+	var x, y int = 3, 4
+	// Pythagorean Theorem: z = sqrt(x^2 + y^2)
+	var f float64 = math.Sqrt(float64(x*x + y*y))
+	var z uint = uint(f)
+	fmt.Println(x, y, z)
+}
+```
+
+
+
+### Channels and Go-Routines
+Go has a type called "Channel" which are pipes that connect concurrent
+Go routines (like threads). You can send values into a channel from one routine
+and receive that value from the channel in another routine with the channel
+operator `<-`.
+
+**By default, sends and receives block until the other side is ready. This 
+allows goroutines to synchronize without explicit locks or condition 
+variables.** - Part of why Go is cool!
+
+```go
+package main
+
+import "fmt"
+
+func sum(s []int, c chan int) {
+	sum := 0 // implicit declaration of int sum to 0
+	for _, v := range s { // iterate through array passed into function
+		sum += v		  // add values in array to total sum
+	}
+	c <- sum // send sum to channel c
+}
+
+func main() {
+	s := []int{7, 2, 8, -9, 4, 0}
+
+	c := make(chan int) // Create channel that holds ints
+
+	// 'go' keyword starts new go-routine on the function that comes after
+	go sum(s[:len(s)/2], c) // One routine sum up first half
+	go sum(s[len(s)/2:], c) // Second routine sum up second half
+	x, y := <-c, <-c // receive from c
+
+	fmt.Println(x, y, x+y)
+}
+```
+
+
 
 ### Decision Making
 ![](https://www.tutorialspoint.com/go/images/decision_making.jpg)
@@ -275,25 +405,25 @@ import "fmt"
 func main() {
 	/* local variable definition */
 	var grade string = "B"
-		var marks int = 90
+	var marks int = 90
 
-		switch marks {
-			case 90: grade = "A"
-			case 80: grade = "B"
-			case 50,60,70 : grade = "C"
-			default: grade = "D"  
-		}
+	switch marks {
+		case 90: grade = "A"
+		case 80: grade = "B"
+		case 50,60,70 : grade = "C"
+		default: grade = "D"  
+	}
 	switch {
 		case grade == "A" :
 			fmt.Printf("Excellent!\n" )     
 		case grade == "B", grade == "C" :
-				fmt.Printf("Well done\n" )      
+			fmt.Printf("Well done\n" )      
 		case grade == "D" :
-					fmt.Printf("You passed\n" )      
+			fmt.Printf("You passed\n" )      
 		case grade == "F":
-						fmt.Printf("Better try again\n" )
+			fmt.Printf("Better try again\n" )
 		default:
-							fmt.Printf("Invalid grade\n" );
+			fmt.Printf("Invalid grade\n" );
 	}
 	fmt.Printf("Your grade is  %s\n", grade );      
 }
@@ -305,13 +435,5 @@ A select statement is like a switch statement but specifically for channels.
 
 
 ```go
-select {
-	case communication clause  :
-		statement(s);      
-	case communication clause  :
-		statement(s); 
-		/* you can have any number of case statements */
-	default : /* Optional */
-		statement(s);
-}
+
 ```
