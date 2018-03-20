@@ -249,7 +249,7 @@ func main() {
 		b bool
 		s string
 	)
-	fmt.Printf("%v %v %v %q\n", i, f, b, s)
+	fmt.Printf("%v %v %v %v\n", i, f, b, s)
 }
 
 ```
@@ -700,19 +700,63 @@ func main() {
 	fmt.Println(compute(math.Pow))
 }
 ```
+## Go-Routines and Channels (One of the most popular parts of Go!)
 
-### Channels and Go-Routines
+### Go-Routines
+A goroutine is a lightweight thread managed by the Go runtime
+* Like pthreads in C/C++
+
+```go
+go f(x, y, z)
+```
+
+starts a new goroutine (thread) that is running
+
+```go
+f(x, y, z)
+```
+
+Here is an example showing that a goroutine is running concurrently
+(at the same time) with the main program
+
+```go
+package main
+
+import (
+	"fmt"
+	"time"
+)
+
+func say(s string) {
+	for i := 0; i < 5; i++ {
+		time.Sleep(100 * time.Millisecond)
+		fmt.Println(s)
+	}
+}
+
+func main() {
+	go say("world")
+	say("hello")
+}
+```
+
+But since the goroutines (threads) are running at the same time,
+things can get messy when they try to access the same thing, 
+because you don't know in what order it will happen - like the
+print statements above
+
+### Channels
 Go has a type called "Channel" which are pipes that connect concurrent
-Go routines (like threads). You can send values into a channel from one routine
+go routines. You can send values into a channel from one routine
 and receive that value from the channel in another routine with the channel
 operator `<-`. 
 
-Channels have to be created with the `make` keyword, which essentially
-just allocates the memory for an object
+Channels have to be created with the `make` keyword
 
 **By default, sends and receives block until the other side is ready. This 
 allows goroutines to synchronize without explicit locks or condition 
-variables.** - Part of why Go is cool!
+variables.** - Easy Concurrency!
+
 
 ```go
 package main
@@ -741,47 +785,25 @@ func main() {
 }
 ```
 
-[comment]: <> (
-### Other Decision Making Structures
 
-#### Switch Statement
+#### DISCLAIMER 
+By default the goroutine communication is synchronous and unbuffered: sends do not complete until there is a receiver to accept the value. There must be a receiver ready to receive data from the channel and then the sender can hand it over directly to the receiver. 
+
 ```go
 package main
 
 import "fmt"
 
-func main() {
-	/* local variable definition */
-	var grade string = "B"
-	var marks int = 90
+func sendToChannel(c chan int) {
+    c <- 1 
+    c <- 2 
+}
 
-	switch marks {
-		case 90: grade = "A"
-		case 80: grade = "B"
-		case 50,60,70 : grade = "C"
-		default: grade = "D"  
-	}
-	switch {
-		case grade == "A" :
-			fmt.Printf("Excellent!\n" )     
-		case grade == "B", grade == "C" :
-			fmt.Printf("Well done\n" )      
-		case grade == "D" :
-			fmt.Printf("You passed\n" )      
-		case grade == "F":
-			fmt.Printf("Better try again\n" )
-		default:
-			fmt.Printf("Invalid grade\n" );
-	}
-	fmt.Printf("Your grade is  %s\n", grade );      
+func main() {
+    c := make(chan int) // Create channel that holds ints
+    go sendToChannel(c)   // Without 'go', this program would fail
+  
+    x, y := <-c, <-c
+    fmt.Println(x, y)
 }
 ```
-#### Select Statement
-
-
-A select statement is like a switch statement but specifically for channels.
-
-
-```go
-
-```)
