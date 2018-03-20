@@ -787,7 +787,7 @@ func main() {
 
 
 #### DISCLAIMER 
-By default the goroutine communication is synchronous and unbuffered: sends do not complete until there is a receiver to accept the value. There must be a receiver ready to receive data from the channel and then the sender can hand it over directly to the receiver. 
+By default the goroutine communication is synchronous and unbuffered: **sends do not complete until there is a receiver to accept the value.** There must be a receiver ready to receive data from the channel and then the sender can hand it over directly to the receiver. 
 
 ```go
 package main
