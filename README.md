@@ -75,8 +75,8 @@ func main() {
 |complex64|
 |complex128|
 
-|Other Numeric Types|
-|-------------------|
+|Other Numeric Types|Description|
+|-------------------|-----------|
 |byte|same as uint8|
 |rune|same as int32|
 |uint|32 or 64bit depending on system|
